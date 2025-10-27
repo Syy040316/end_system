@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: job_monitor_postgres
+    environment:
+      POSTGRES_DB: job_monitor
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: job_monitor_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mock_platform:
+    build:
+      context: ./mock_platform
+      dockerfile: Dockerfile
+    container_name: job_monitor_mock_platform
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_APP: app.main
+      FLASK_ENV: development
+    volumes:
+      - ./mock_platform:/app
+    command: flask run --host=0.0.0.0 --port=5001
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job_monitor_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mock_platform:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://admin:password@postgres:5432/job_monitor
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      JWT_SECRET_KEY: dev-jwt-secret-key-change-in-production
+      MOCK_PLATFORM_URL: http://mock_platform:5001
+      MAIL_SERVER: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USE_TLS: "True"
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER:-noreply@jobmonitor.com}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "
+        flask db upgrade &&
+        flask run --host=0.0.0.0 --port=5000
+      "
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job_monitor_celery_worker
+    depends_on:
+      - backend
+      - redis
+    environment:
+      DATABASE_URL: postgresql://admin:password@postgres:5432/job_monitor
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      MOCK_PLATFORM_URL: http://mock_platform:5001
+      MAIL_SERVER: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USE_TLS: "True"
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER:-noreply@jobmonitor.com}
+    volumes:
+      - ./backend:/app
+    command: celery -A app.celery_app worker -l info
+
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job_monitor_celery_beat
+    depends_on:
+      - backend
+      - redis
+    environment:
+      DATABASE_URL: postgresql://admin:password@postgres:5432/job_monitor
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      MOCK_PLATFORM_URL: http://mock_platform:5001
+    volumes:
+      - ./backend:/app
+    command: celery -A app.celery_app beat -l info
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: job_monitor_frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_BASE_URL: http://localhost:5000
+    command: npm run dev -- --host
+
+volumes:
+  postgres_data:
+  redis_data:
