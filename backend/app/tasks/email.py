@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 @celery.task(bind=True, name='app.tasks.email.send_monitoring_notification')
 def send_monitoring_notification(self, result_id):
     """发送监控通知邮件"""
-    app = create_app()
+    app = create_app(register_blueprints=False)
     
     with app.app_context():
         result = ScanResult.query.get(result_id)

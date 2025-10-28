@@ -20,7 +20,7 @@ swagger = Swagger()
 redis_client = None
 
 
-def create_app(config_name='default'):
+def create_app(config_name='default', register_blueprints=True):
     """应用工厂函数"""
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -30,7 +30,10 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
-    swagger.init_app(app)
+    
+    # 只在需要时初始化Swagger（避免Celery中的问题）
+    if register_blueprints:
+        swagger.init_app(app)
     
     # 配置CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -39,17 +42,18 @@ def create_app(config_name='default'):
     global redis_client
     redis_client = redis.from_url(app.config['REDIS_URL'])
     
-    # 注册蓝图
-    from app.routes import auth, monitoring, jobs, scan_results
-    app.register_blueprint(auth.bp, url_prefix='/api/v1/auth')
-    app.register_blueprint(monitoring.bp, url_prefix='/api/v1/monitoring-rules')
-    app.register_blueprint(jobs.bp, url_prefix='/api/v1/jobs')
-    app.register_blueprint(scan_results.bp, url_prefix='/api/v1/scan-results')
-    
-    # 健康检查
-    @app.route('/health')
-    def health():
-        return {'status': 'healthy'}
+    # 只在需要时注册蓝图
+    if register_blueprints:
+        from app.routes import auth, monitoring, jobs, scan_results
+        app.register_blueprint(auth.bp, url_prefix='/api/v1/auth')
+        app.register_blueprint(monitoring.bp, url_prefix='/api/v1/monitoring-rules')
+        app.register_blueprint(jobs.bp, url_prefix='/api/v1/jobs')
+        app.register_blueprint(scan_results.bp, url_prefix='/api/v1/scan-results')
+        
+        # 健康检查
+        @app.route('/health')
+        def health():
+            return {'status': 'healthy'}
     
     return app
 

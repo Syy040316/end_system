@@ -15,7 +15,7 @@ MOCK_PLATFORM_URL = os.getenv('MOCK_PLATFORM_URL', 'http://localhost:5001')
 @celery.task(bind=True, name='app.tasks.monitor.execute_all_monitoring_tasks')
 def execute_all_monitoring_tasks(self):
     """执行所有活跃的监控任务"""
-    app = create_app()
+    app = create_app(register_blueprints=False)
     
     with app.app_context():
         # 获取所有活跃的监控规则
@@ -38,7 +38,7 @@ def execute_all_monitoring_tasks(self):
 @celery.task(bind=True, name='app.tasks.monitor.execute_monitoring_task')
 def execute_monitoring_task(self, rule_id):
     """执行单个监控任务"""
-    app = create_app()
+    app = create_app(register_blueprints=False)
     
     with app.app_context():
         rule = MonitoringRule.query.get(rule_id)
