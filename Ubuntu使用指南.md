@@ -41,8 +41,7 @@ chmod +x *.sh
 5. 查看服务状态
 6. 查看实时日志
 7. 检查监控系统
-8. 测试推送API
-9. 创建管理员账号
+8. 创建管理员账号
 
 #### `rebuild_all.sh` - 完整重建
 停止所有服务，重新构建并启动：
@@ -110,23 +109,8 @@ cat backups/backup_20251028_120000_database.sql | docker-compose exec -T postgre
 
 ### 🧪 测试脚本
 
-#### `test_push_api.py` - 测试推送API
-测试第三方数据推送功能：
-
-```bash
-# 先安装依赖
-pip3 install requests
-
-# 运行测试
-python3 test_push_api.py
-```
-
-测试内容：
-- 登录认证
-- 推送单个职位
-- 批量推送职位
-- 更新职位信息
-- 下架职位
+<!-- 推送API功能暂未实现，测试脚本已移除
+如需实现，请参考 紧急修复说明.md -->
 
 ## 🛠️ 常用命令
 
@@ -476,7 +460,6 @@ docker-compose logs -f    # 日志
 ./check_monitoring.sh     # 诊断
 
 # 测试
-python3 test_push_api.py  # 测试API
 curl http://localhost:5000/health  # 健康检查
 ```
 

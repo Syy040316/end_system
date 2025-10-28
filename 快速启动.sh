@@ -37,8 +37,7 @@ echo "  4) 重启所有服务"
 echo "  5) 查看服务状态"
 echo "  6) 查看实时日志"
 echo "  7) 检查监控系统"
-echo "  8) 测试推送API"
-echo "  9) 创建管理员账号"
+echo "  8) 创建管理员账号"
 echo "  0) 退出"
 echo ""
 
@@ -127,21 +126,6 @@ case $choice in
         ;;
         
     8)
-        echo ""
-        echo -e "${YELLOW}测试推送API...${NC}"
-        if command -v python3 &> /dev/null; then
-            if python3 -c "import requests" 2>/dev/null; then
-                python3 test_push_api.py
-            else
-                echo -e "${RED}✗ 缺少requests库${NC}"
-                echo "请先安装: pip3 install requests"
-            fi
-        else
-            echo -e "${RED}✗ 未安装Python3${NC}"
-        fi
-        ;;
-        
-    9)
         echo ""
         echo -e "${YELLOW}创建管理员账号...${NC}"
         read -p "用户名: " username

@@ -44,12 +44,11 @@ def create_app(config_name='default', register_blueprints=True):
     
     # 只在需要时注册蓝图
     if register_blueprints:
-        from app.routes import auth, monitoring, jobs, scan_results, push
+        from app.routes import auth, monitoring, jobs, scan_results
         app.register_blueprint(auth.bp, url_prefix='/api/v1/auth')
         app.register_blueprint(monitoring.bp, url_prefix='/api/v1/monitoring-rules')
         app.register_blueprint(jobs.bp, url_prefix='/api/v1/jobs')
         app.register_blueprint(scan_results.bp, url_prefix='/api/v1/scan-results')
-        app.register_blueprint(push.bp)  # push已经有了url_prefix
         
         # 健康检查
         @app.route('/health')
