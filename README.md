@@ -1,213 +1,278 @@
 # 招聘信息监控系统
 
-基于爬虫的招聘信息监控系统 - 完整实现（第一、二阶段）
+基于爬虫技术的智能招聘信息监控平台，支持自定义规则监控、邮件通知和第三方数据接入。
 
-## 系统架构
+## ✨ 主要功能
 
-```
-├── backend/                 # 主后端服务
-│   ├── app/                # 应用核心
-│   ├── migrations/         # 数据库迁移
-│   ├── tests/              # 测试
-│   └── requirements.txt    # Python依赖
-├── mock_platform/          # 模拟招聘平台
-│   ├── app/
-│   └── requirements.txt
-├── frontend/               # Vue前端
-│   ├── src/
-│   └── package.json
-└── docker-compose.yml      # Docker编排
+- 🔍 **智能监控** - 自定义关键词、城市、薪资范围等筛选条件
+- 📧 **邮件通知** - 新增/更新/下架招聘信息实时通知
+- 📊 **数据可视化** - 直观的仪表板展示监控统计
+- 🔌 **API接入** - 第三方招聘平台可推送数据到系统
+- 📡 **平台监控** - 实时查看模拟招聘平台数据变化
+- 🔄 **自动化任务** - 基于Celery的定时监控和异步处理
 
-```
-
-## 技术栈
+## 🏗️ 技术栈
 
 ### 后端
-- **框架**: Flask + Flask-RESTful
-- **数据库**: PostgreSQL 15
-- **缓存**: Redis 7
-- **任务队列**: Celery + Redis
-- **认证**: JWT (Flask-JWT-Extended)
-- **ORM**: SQLAlchemy
-- **数据库迁移**: Alembic
+- **Flask** - Python Web框架
+- **PostgreSQL** - 关系型数据库
+- **Redis** - 缓存和消息队列
+- **Celery** - 分布式任务队列
+- **SQLAlchemy** - ORM
+- **JWT** - 身份认证
 
 ### 前端
-- **框架**: Vue 3 + TypeScript
-- **UI库**: Ant Design Vue 4
-- **状态管理**: Pinia
-- **路由**: Vue Router 4
-- **HTTP客户端**: Axios
-- **构建工具**: Vite
+- **Vue 3** - 渐进式JavaScript框架
+- **TypeScript** - 类型安全
+- **Ant Design Vue** - UI组件库
+- **Axios** - HTTP客户端
 
-### 模拟招聘平台
-- **框架**: Flask
-- **数据生成**: Faker
+### 部署
+- **Docker** - 容器化
+- **Docker Compose** - 服务编排
 
-## 快速开始
+## 🚀 快速开始
 
-### 使用Docker Compose（推荐）
+### 前置要求
+
+- Docker 20.10+
+- Docker Compose 2.0+
+- Git
+- Python 3.9+ (用于测试脚本，可选)
+
+### Ubuntu环境部署
+
+#### 1. 克隆项目
 
 ```bash
-# 启动所有服务
-docker-compose up -d
+git clone https://github.com/Syy040316/end_system.git
+cd end_system
+```
 
-# 查看日志
+#### 2. 赋予脚本执行权限
+
+```bash
+chmod +x *.sh
+```
+
+#### 3. 启动系统
+
+**方法A：使用交互式菜单（推荐新手）**
+
+```bash
+./快速启动.sh
+```
+
+选择选项 1 进行首次安装。
+
+**方法B：直接启动（熟悉命令行）**
+
+```bash
+./rebuild_all.sh
+```
+
+#### 4. 等待服务启动
+
+大约需要30秒。你可以查看日志：
+
+```bash
 docker-compose logs -f
-
-# 停止服务
-docker-compose down
 ```
 
-服务地址：
-- 前端: http://localhost:5173
-- 主后端API: http://localhost:5000
-- 模拟招聘平台: http://localhost:5001
-- API文档: http://localhost:5000/api/docs
+#### 5. 访问系统
 
-### 本地开发
+- **前端界面**: http://localhost:8080 或 http://your-server-ip:8080
+- **后端API**: http://localhost:5000
+- **API文档**: http://localhost:5000/apidocs
+- **模拟平台**: http://localhost:5001
 
-#### 后端
+#### 6. 创建账号
+
+访问前端界面，点击"注册"创建账号，或使用快速启动脚本：
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-# 配置环境变量
-cp .env.example .env
-
-# 数据库迁移
-flask db upgrade
-
-# 启动后端
-flask run --port=5000
-
-# 启动Celery Worker（新终端）
-celery -A app.celery worker -l info
-
-# 启动Celery Beat（新终端）
-celery -A app.celery beat -l info
+./快速启动.sh
+# 选择选项 9 创建管理员账号
 ```
 
-#### 模拟招聘平台
+## 📚 文档
+
+- **[Ubuntu使用指南.md](Ubuntu使用指南.md)** - 所有可用脚本和命令
+- **[Ubuntu部署完整指南.md](Ubuntu部署完整指南.md)** - 从零开始的详细部署教程
+- **[更新说明.md](更新说明.md)** - 新功能说明和使用指南
+
+## 🔧 常用脚本
+
+| 脚本 | 功能 | 使用场景 |
+|------|------|----------|
+| `快速启动.sh` | 交互式管理工具 | 日常管理（推荐） |
+| `rebuild_all.sh` | 完整重建 | 首次部署、重大更新 |
+| `check_monitoring.sh` | 监控诊断 | 检查系统是否正常工作 |
+| `backup.sh` | 数据备份 | 定期备份 |
+| `update.sh` | 从Git更新 | 拉取最新代码并部署 |
+
+## 📖 使用示例
+
+### 1. 创建监控规则
+
+登录系统后：
+
+1. 点击"监控规则"
+2. 点击"创建规则"
+3. 填写规则信息：
+   - 规则名称：如"Python后端岗位"
+   - 关键词：Python, Django, Flask
+   - 城市：北京, 上海
+   - 薪资范围：20-40K
+4. 保存并激活
+
+### 2. 查看监控结果
+
+- 点击"扫描结果"查看所有监控记录
+- 点击"仪表板"的统计卡片快速跳转
+- 在"平台数据监控"查看模拟平台数据变化
+
+### 3. 第三方平台推送数据
+
+查看"第三方数据接入"页面的完整API文档和示例代码。
+
+简单示例：
+
+```python
+import requests
+
+# 1. 登录获取Token
+resp = requests.post("http://your-server:5000/api/v1/auth/login",
+    json={"username": "your_user", "password": "your_pass"})
+token = resp.json()["data"]["access_token"]
+
+# 2. 推送职位
+requests.post("http://your-server:5000/api/v1/jobs/push",
+    headers={"Authorization": f"Bearer {token}"},
+    json={
+        "job_id": "unique_job_001",
+        "company": "示例公司",
+        "position": "Python工程师",
+        "skills": ["Python", "Django"],
+        "location": "北京",
+        "salary_min": 25,
+        "salary_max": 35
+    })
+```
+
+## 🛠️ 常见问题
+
+### Q: 服务启动失败怎么办？
 
 ```bash
-cd mock_platform
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-flask run --port=5001
+# 查看日志
+docker-compose logs
+
+# 完全重建
+./rebuild_all.sh
 ```
 
-#### 前端
+### Q: 监控没有发现新职位？
 
 ```bash
-cd frontend
-npm install
-npm run dev
+# 运行诊断工具
+./check_monitoring.sh
 ```
 
-## 核心功能
+检查：
+1. 是否创建了监控规则？
+2. 规则是否已激活？
+3. 筛选条件是否太严格？
 
-### 第一阶段（MVP）
-- ✅ 用户注册/登录（JWT认证）
-- ✅ 监控规则管理（创建、查询、更新、删除）
-- ✅ 模拟招聘平台（500+数据、定时更新）
-- ✅ 定时监控任务（Celery Beat）
-- ✅ 邮件通知系统
-- ✅ 基础前端界面
-
-### 第二阶段
-- ✅ 高级搜索和过滤
-- ✅ 变化详情展示（新增、更新、下架）
-- ✅ API文档（Swagger UI）
-- ✅ 缓存优化（Redis）
-- ✅ 数据库索引优化
-
-## API文档
-
-启动后端后访问: http://localhost:5000/api/docs
-
-主要API端点：
-
-### 用户认证
-- `POST /api/v1/auth/register` - 用户注册
-- `POST /api/v1/auth/login` - 用户登录
-- `POST /api/v1/auth/logout` - 用户登出
-- `POST /api/v1/auth/refresh` - 刷新Token
-
-### 监控规则
-- `GET /api/v1/monitoring-rules` - 获取所有规则
-- `POST /api/v1/monitoring-rules` - 创建规则
-- `GET /api/v1/monitoring-rules/{id}` - 获取规则详情
-- `PATCH /api/v1/monitoring-rules/{id}` - 更新规则
-- `DELETE /api/v1/monitoring-rules/{id}` - 删除规则
-- `POST /api/v1/monitoring-rules/{id}/test` - 测试规则
-
-### 扫描结果
-- `GET /api/v1/scan-results` - 获取扫描结果
-- `GET /api/v1/scan-results/{id}` - 获取结果详情
-
-### 招聘信息
-- `GET /api/v1/jobs` - 获取招聘列表
-- `GET /api/v1/jobs/{id}` - 获取招聘详情
-- `GET /api/v1/jobs/search` - 搜索招聘
-
-## 数据库设计
-
-主要表结构：
-- `users` - 用户表
-- `monitoring_rules` - 监控规则表
-- `scan_results` - 扫描结果表
-- `jobs` - 招聘信息表
-- `job_versions` - 招聘变化历史表
-- `user_preferences` - 用户邮件偏好表
-
-## 监控任务流程
-
-1. Celery Beat 定时触发监控任务
-2. 对每个用户的监控规则：
-   - 调用模拟平台API获取最新招聘
-   - 与上次结果对比，检测变化
-   - 记录新增、更新、下架的招聘
-3. 根据用户邮件偏好触发邮件通知
-4. 保存扫描结果到数据库
-
-## 环境变量配置
-
-### 后端 (.env)
-```
-DATABASE_URL=postgresql://admin:password@localhost:5432/job_monitor
-REDIS_URL=redis://localhost:6379/0
-SECRET_KEY=your-secret-key-here
-JWT_SECRET_KEY=your-jwt-secret-key
-
-# 邮件配置
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USE_TLS=True
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-email-password
-MAIL_DEFAULT_SENDER=your-email@gmail.com
-```
-
-## 测试
+### Q: 如何备份数据？
 
 ```bash
-# 后端测试
-cd backend
-pytest
-
-# 前端测试
-cd frontend
-npm run test
+./backup.sh
 ```
 
-## 贡献
+备份文件保存在 `./backups` 目录。
+
+### Q: 忘记密码怎么办？
+
+```bash
+# 使用快速启动脚本重置
+./快速启动.sh
+# 选择选项 9，创建新账号
+```
+
+## 🔒 生产环境部署
+
+### 安全加固
+
+1. **修改默认密码**
+   - 编辑 `docker-compose.yml` 修改数据库密码
+   - 编辑 `backend/config.py` 修改 SECRET_KEY
+
+2. **配置防火墙**
+   ```bash
+   sudo ufw allow 80/tcp
+   sudo ufw allow 443/tcp
+   sudo ufw enable
+   ```
+
+3. **使用Nginx反向代理**
+   - 参考 [Ubuntu部署完整指南.md](Ubuntu部署完整指南.md#配置nginx反向代理)
+
+4. **配置HTTPS**
+   ```bash
+   sudo certbot --nginx -d your-domain.com
+   ```
+
+### 性能优化
+
+- 限制Docker容器资源
+- 配置PostgreSQL性能参数
+- 启用Nginx缓存
+- 定期清理Docker资源
+
+详见：[Ubuntu部署完整指南.md](Ubuntu部署完整指南.md#性能优化)
+
+## 📊 系统架构
+
+```
+┌─────────────┐
+│   Frontend  │ (Vue 3 + Ant Design)
+│  :8080      │
+└──────┬──────┘
+       │
+       ↓
+┌─────────────┐     ┌──────────────┐
+│   Backend   │────→│  PostgreSQL  │
+│   :5000     │     │    :5432     │
+└──────┬──────┘     └──────────────┘
+       │
+       ↓
+┌─────────────┐     ┌──────────────┐
+│   Redis     │←────│    Celery    │
+│   :6379     │     │ Worker/Beat  │
+└─────────────┘     └──────────────┘
+       │
+       ↓
+┌─────────────┐
+│Mock Platform│ (模拟招聘平台)
+│   :5001     │
+└─────────────┘
+```
+
+## 🤝 贡献
 
 欢迎提交Issue和Pull Request！
 
-## 许可证
+## 📄 许可证
 
 MIT License
+
+## 📞 支持
+
+- 查看文档：[Ubuntu使用指南.md](Ubuntu使用指南.md)
+- 运行诊断：`./check_monitoring.sh`
+- 查看日志：`docker-compose logs -f`
+
+---
+
+**快速开始：`./快速启动.sh`** 🚀
