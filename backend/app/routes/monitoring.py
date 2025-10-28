@@ -24,7 +24,7 @@ def get_monitoring_rules():
         description: 成功获取规则列表
     """
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())  # 转回整数
         print(f"[DEBUG] Current user ID: {current_user_id}, Type: {type(current_user_id)}")
         
         rules = MonitoringRule.query.filter_by(user_id=current_user_id).all()
@@ -104,7 +104,7 @@ def create_monitoring_rule():
       201:
         description: 创建成功
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     data = request.get_json()
     
     if not data.get('rule_name') or not data.get('keywords'):
@@ -164,7 +164,7 @@ def get_monitoring_rule(rule_id):
       404:
         description: 规则不存在
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     rule = MonitoringRule.query.filter_by(
         rule_id=rule_id,
@@ -209,7 +209,7 @@ def update_monitoring_rule(rule_id):
       200:
         description: 更新成功
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     data = request.get_json()
     
     rule = MonitoringRule.query.filter_by(
@@ -273,7 +273,7 @@ def delete_monitoring_rule(rule_id):
       200:
         description: 删除成功
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     rule = MonitoringRule.query.filter_by(
         rule_id=rule_id,
@@ -317,7 +317,7 @@ def test_monitoring_rule(rule_id):
       200:
         description: 测试任务已提交
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     rule = MonitoringRule.query.filter_by(
         rule_id=rule_id,

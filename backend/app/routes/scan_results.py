@@ -34,7 +34,7 @@ def get_scan_results():
       200:
         description: 成功获取扫描结果
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 20))
@@ -87,7 +87,7 @@ def get_scan_result(result_id):
       200:
         description: 成功获取扫描结果详情
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     result = ScanResult.query.filter_by(
         result_id=result_id,
@@ -123,7 +123,7 @@ def get_scan_stats():
       200:
         description: 成功获取统计信息
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     
     # 获取最近的扫描结果统计
     recent_results = ScanResult.query.filter_by(user_id=current_user_id)\

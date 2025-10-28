@@ -156,9 +156,9 @@ def login():
     user.last_login_at = datetime.utcnow()
     db.session.commit()
     
-    # 生成Token
-    access_token = create_access_token(identity=user.user_id)
-    refresh_token = create_refresh_token(identity=user.user_id)
+    # 生成Token（user_id必须转为字符串）
+    access_token = create_access_token(identity=str(user.user_id))
+    refresh_token = create_refresh_token(identity=str(user.user_id))
     
     return jsonify({
         'code': 0,
@@ -186,7 +186,7 @@ def refresh():
       200:
         description: 刷新成功
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = get_jwt_identity()  # 已经是字符串
     access_token = create_access_token(identity=current_user_id)
     
     return jsonify({
@@ -213,7 +213,7 @@ def get_current_user():
       200:
         description: 成功获取用户信息
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())  # 转回整数
     user = User.query.get(current_user_id)
     
     if not user:
