@@ -40,6 +40,11 @@ const router = createRouter({
           path: 'jobs',
           name: 'Jobs',
           component: () => import('@/views/Jobs.vue')
+        },
+        {
+          path: 'api-docs',
+          name: 'ApiDocs',
+          component: () => import('@/views/ApiDocs.vue')
         }
       ]
     }

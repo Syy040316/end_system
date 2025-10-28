@@ -39,6 +39,13 @@
           </template>
           <span>招聘搜索</span>
         </a-menu-item>
+
+        <a-menu-item key="api-docs">
+          <template #icon>
+            <ApiOutlined />
+          </template>
+          <span>第三方数据接入</span>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
 
@@ -95,6 +102,7 @@ import {
   UnorderedListOutlined,
   FileTextOutlined,
   SearchOutlined,
+  ApiOutlined,
   UserOutlined,
   DownOutlined,
   LogoutOutlined
@@ -120,7 +128,8 @@ function handleMenuClick({ key }: { key: string }) {
     'dashboard': 'Dashboard',
     'monitoring-rules': 'MonitoringRules',
     'scan-results': 'ScanResults',
-    'jobs': 'Jobs'
+    'jobs': 'Jobs',
+    'api-docs': 'ApiDocs'
   }
   
   if (routeMap[key]) {
