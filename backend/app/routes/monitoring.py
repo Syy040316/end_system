@@ -23,19 +23,31 @@ def get_monitoring_rules():
       200:
         description: 成功获取规则列表
     """
-    current_user_id = get_jwt_identity()
-    
-    rules = MonitoringRule.query.filter_by(user_id=current_user_id).all()
-    
-    return jsonify({
-        'code': 0,
-        'message': 'success',
-        'data': {
-            'rules': [rule.to_dict() for rule in rules],
-            'count': len(rules)
-        },
-        'timestamp': datetime.utcnow().isoformat()
-    })
+    try:
+        current_user_id = get_jwt_identity()
+        print(f"[DEBUG] Current user ID: {current_user_id}, Type: {type(current_user_id)}")
+        
+        rules = MonitoringRule.query.filter_by(user_id=current_user_id).all()
+        print(f"[DEBUG] Found {len(rules)} rules")
+        
+        return jsonify({
+            'code': 0,
+            'message': 'success',
+            'data': {
+                'rules': [rule.to_dict() for rule in rules],
+                'count': len(rules)
+            },
+            'timestamp': datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        print(f"[ERROR] Error in get_monitoring_rules: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'code': 500,
+            'message': str(e),
+            'data': None
+        }), 500
 
 
 @bp.route('', methods=['POST'])

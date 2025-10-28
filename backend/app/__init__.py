@@ -31,6 +31,31 @@ def create_app(config_name='default', register_blueprints=True):
     jwt.init_app(app)
     mail.init_app(app)
     
+    # JWT错误处理
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error_string):
+        return jsonify({
+            'code': 401,
+            'message': f'Invalid token: {error_string}',
+            'data': None
+        }), 401
+    
+    @jwt.unauthorized_loader
+    def unauthorized_callback(error_string):
+        return jsonify({
+            'code': 401,
+            'message': f'Missing authorization header: {error_string}',
+            'data': None
+        }), 401
+    
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_data):
+        return jsonify({
+            'code': 401,
+            'message': 'Token has expired',
+            'data': None
+        }), 401
+    
     # 只在需要时初始化Swagger（避免Celery中的问题）
     if register_blueprints:
         swagger.init_app(app)
