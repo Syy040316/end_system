@@ -40,6 +40,13 @@
           <span>招聘搜索</span>
         </a-menu-item>
 
+        <a-menu-item key="platform-monitor">
+          <template #icon>
+            <MonitorOutlined />
+          </template>
+          <span>平台数据监控</span>
+        </a-menu-item>
+
         <a-menu-item key="api-docs">
           <template #icon>
             <ApiOutlined />
@@ -102,6 +109,7 @@ import {
   UnorderedListOutlined,
   FileTextOutlined,
   SearchOutlined,
+  MonitorOutlined,
   ApiOutlined,
   UserOutlined,
   DownOutlined,
@@ -129,6 +137,7 @@ function handleMenuClick({ key }: { key: string }) {
     'monitoring-rules': 'MonitoringRules',
     'scan-results': 'ScanResults',
     'jobs': 'Jobs',
+    'platform-monitor': 'PlatformMonitor',
     'api-docs': 'ApiDocs'
   }
   

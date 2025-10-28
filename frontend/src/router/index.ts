@@ -45,6 +45,11 @@ const router = createRouter({
           path: 'api-docs',
           name: 'ApiDocs',
           component: () => import('@/views/ApiDocs.vue')
+        },
+        {
+          path: 'platform-monitor',
+          name: 'PlatformMonitor',
+          component: () => import('@/views/PlatformMonitor.vue')
         }
       ]
     }

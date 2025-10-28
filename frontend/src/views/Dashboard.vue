@@ -4,7 +4,7 @@
     
     <a-row :gutter="16" style="margin-bottom: 24px">
       <a-col :span="6">
-        <a-card>
+        <a-card hoverable @click="goToRules" style="cursor: pointer">
           <a-statistic
             title="监控规则总数"
             :value="stats.totalRules"
@@ -14,7 +14,7 @@
       </a-col>
 
       <a-col :span="6">
-        <a-card>
+        <a-card hoverable @click="goToResults" style="cursor: pointer">
           <a-statistic
             title="新增招聘"
             :value="stats.totalNewJobs"
@@ -25,7 +25,7 @@
       </a-col>
 
       <a-col :span="6">
-        <a-card>
+        <a-card hoverable @click="goToResults" style="cursor: pointer">
           <a-statistic
             title="更新招聘"
             :value="stats.totalUpdatedJobs"
@@ -36,7 +36,7 @@
       </a-col>
 
       <a-col :span="6">
-        <a-card>
+        <a-card hoverable @click="goToResults" style="cursor: pointer">
           <a-statistic
             title="下架招聘"
             :value="stats.totalDeletedJobs"
@@ -138,5 +138,13 @@ function formatTime(time: string) {
 
 function goToCreateRule() {
   router.push({ name: 'MonitoringRules' })
+}
+
+function goToRules() {
+  router.push({ name: 'MonitoringRules' })
+}
+
+function goToResults() {
+  router.push({ name: 'ScanResults' })
 }
 </script>

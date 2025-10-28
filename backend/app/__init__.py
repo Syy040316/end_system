@@ -31,31 +31,6 @@ def create_app(config_name='default', register_blueprints=True):
     jwt.init_app(app)
     mail.init_app(app)
     
-    # JWT错误处理
-    @jwt.invalid_token_loader
-    def invalid_token_callback(error_string):
-        return jsonify({
-            'code': 401,
-            'message': f'Invalid token: {error_string}',
-            'data': None
-        }), 401
-    
-    @jwt.unauthorized_loader
-    def unauthorized_callback(error_string):
-        return jsonify({
-            'code': 401,
-            'message': f'Missing authorization header: {error_string}',
-            'data': None
-        }), 401
-    
-    @jwt.expired_token_loader
-    def expired_token_callback(jwt_header, jwt_data):
-        return jsonify({
-            'code': 401,
-            'message': 'Token has expired',
-            'data': None
-        }), 401
-    
     # 只在需要时初始化Swagger（避免Celery中的问题）
     if register_blueprints:
         swagger.init_app(app)
@@ -69,11 +44,12 @@ def create_app(config_name='default', register_blueprints=True):
     
     # 只在需要时注册蓝图
     if register_blueprints:
-        from app.routes import auth, monitoring, jobs, scan_results
+        from app.routes import auth, monitoring, jobs, scan_results, push
         app.register_blueprint(auth.bp, url_prefix='/api/v1/auth')
         app.register_blueprint(monitoring.bp, url_prefix='/api/v1/monitoring-rules')
         app.register_blueprint(jobs.bp, url_prefix='/api/v1/jobs')
         app.register_blueprint(scan_results.bp, url_prefix='/api/v1/scan-results')
+        app.register_blueprint(push.bp)  # push已经有了url_prefix
         
         # 健康检查
         @app.route('/health')
